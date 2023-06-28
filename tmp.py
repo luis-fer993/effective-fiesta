@@ -1,6 +1,7 @@
 #hangman.py
+#hangman.py
 
-import random ,sys,os
+import random ,os
 
 HANGMANPICS=[''' 
              
@@ -65,17 +66,43 @@ HANGMANPICS=['''
     /|\  |    
     / \  |   
          |    
+ ============''',
+ ''' 
+             
+     +---+
+     |   |
+    [0   |    
+    /|\  |    
+    / \  |   
+         |    
+ ============''',
+ ''' 
+             
+     +---+
+     |   |
+    [0]  |    
+    /|\  |    
+    / \  |   
+         |    
  ============'''
  ]
-
-words = 'ant baboon badger bat bear beaver camel cat clam cobra cougar coyote crow deer dog donkey duck eagle ferret fox frog goat goose hawk lion lizard llama mole monkey moose mouse mule newt otter owl panda parrot pigeon python rabbit ram rat raven rhino salmon seal shark sheep skunk sloth snake spider stork swan tiger toad trout turkey turtle weasel whale wolf wombat zebra'.split()
-
+# Dictionary of words {key : value }
+words ={'Animals':'ant baboon badger bat bear beaver camel cat clam cobra cougar coyote crow deer dog donkey duck eagle ferret fox frog goat goose hawk lion lizard llama mole monkey moose mouse mule newt otter owl panda parrot pigeon python rabbit ram rat raven rhino salmon seal shark sheep skunk sloth snake spider stork swan tiger toad trout turkey turtle weasel whale wolf wombat zebra'.split(), #split function create a list from substrings ['h','o','l','a']
+        
+        'Colors':'red orange yellow green blue indigo violet white black brown'.split(),
+        
+        'Shapes':'square triangle rectangle circle ellipse rhombus trapezoid chevron pentagon hexagon septagon octagon'.split(),
+        
+        'Fruits':'apple orange lemon lime pear watermelon grape grapefruit cherry banana cantaloupe mango strawberry tomato'.split()
+    }
 def getRamdomWord(wordList):
-    wordIndex=random.randint(0, len(wordList)-1)
-    return wordList[wordIndex]
+    #random.choice set a random value form list 
+    wordKey= random.choice(list(wordList.keys())) #just list of keys on dictionary 
+    #chose a random int number 
+    wordIndex=random.randint(0, len(wordList[wordKey])-1) # count the values of dictionary based on key 
+    return [wordList[wordKey][wordIndex],wordKey] # return a list of [wordramdom, keyOrsection]
 
 def displayBoard(HANGMANPICS,missedLetters,correctLetters,secretWord):
-    os.system('cls')
     print(HANGMANPICS[len(missedLetters)],end='\n')
     print('Missedletters: ', end=' ')
     for letter in missedLetters:
@@ -112,10 +139,17 @@ def playAgain():
 print('HANGMAN')
 missedLetters=''
 correctLetters=''
-secretWord=getRamdomWord(words)
+#assign the lists values to each varible 
+#['val1','val2']
+#   |       |
+#   V       V
+#  var1 , var2
+secretWord, secretKey=getRamdomWord(words)
 GameIsDone=False
 
 while True:
+    os.system('cls')
+    print('The secret word is in the set: ' + secretKey) 
     displayBoard(HANGMANPICS,missedLetters,correctLetters,secretWord)
     guess=getGuess(missedLetters+correctLetters)
     
@@ -127,7 +161,6 @@ while True:
             if secretWord[i]not in correctLetters:
                 foundAllLetters=False
                 break
-        
         if foundAllLetters:
             print('YES, The secret Word is %s, You have won!!'%(secretWord))
             GameIsDone=True
@@ -135,16 +168,17 @@ while True:
         missedLetters+=guess
         
         if len(missedLetters) == len(HANGMANPICS)-1:
+            os.system('cls')
             displayBoard(HANGMANPICS,missedLetters,correctLetters,secretWord)
             print('You have run out of guesses!\nAfter ' + str(len(missedLetters)) + ' missed guesses and ' + str(len(correctLetters)) + ' correct guesses, the word was "' + secretWord + '"') 
-            
             GameIsDone=True
         
         if GameIsDone:
             if playAgain():
                 missedLetters=''
                 correctLetters=''
-                secretWord=getRamdomWord(words)
+                secretWord, secretKey=getRamdomWord(words)
                 GameIsDone=False
             else:
                 break
+    
